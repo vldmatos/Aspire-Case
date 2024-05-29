@@ -1,0 +1,6 @@
+@Sensor.Manager_HostAddress = http://localhost:5191
+
+GET {{Sensor.Manager_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
