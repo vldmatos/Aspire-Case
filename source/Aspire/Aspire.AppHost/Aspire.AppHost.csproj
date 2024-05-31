@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Calibrator.Analyzer\Calibrator.Analyzer.csproj" />
     <ProjectReference Include="..\..\Data.Collector\Data.Collector.csproj" />
+    <ProjectReference Include="..\..\Library\Library.csproj" />
     <ProjectReference Include="..\..\Sensor.Manager\Sensor.Manager.csproj" />
   </ItemGroup>
 
