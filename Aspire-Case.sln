@@ -5,15 +5,15 @@ VisualStudioVersion = 17.10.34916.146
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aspire.AppHost", "source\Aspire\Aspire.AppHost\Aspire.AppHost.csproj", "{2341D34F-0038-4C2C-B845-297F17213CDB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensor.Manager", "source\Sensor.Manager\Sensor.Manager.csproj", "{3833DCD1-0017-4117-991E-C7DCE141CC14}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data.Collector", "source\Data.Collector\Data.Collector.csproj", "{10AFB19D-1AB8-45ED-B466-CE1989D20958}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calibrator.Analyzer", "source\Calibrator.Analyzer\Calibrator.Analyzer.csproj", "{2D66F1F1-2A80-4C05-B36F-063DAF76DC87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library", "source\Library\Library.csproj", "{071FA3DA-B17F-4F4B-8A41-4C16E72BF191}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library", "source\Library\Library.csproj", "{071FA3DA-B17F-4F4B-8A41-4C16E72BF191}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps", "Apps", "{6FB396AD-C277-4CBE-ACCB-CF77BF87C7BD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensor.Manager", "source\Sensor.Manager\Sensor.Manager.csproj", "{1FF263EB-981F-42A7-A9FC-5473CA7A63FC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,10 +25,6 @@ Global
 		{2341D34F-0038-4C2C-B845-297F17213CDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2341D34F-0038-4C2C-B845-297F17213CDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2341D34F-0038-4C2C-B845-297F17213CDB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3833DCD1-0017-4117-991E-C7DCE141CC14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3833DCD1-0017-4117-991E-C7DCE141CC14}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3833DCD1-0017-4117-991E-C7DCE141CC14}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3833DCD1-0017-4117-991E-C7DCE141CC14}.Release|Any CPU.Build.0 = Release|Any CPU
 		{10AFB19D-1AB8-45ED-B466-CE1989D20958}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{10AFB19D-1AB8-45ED-B466-CE1989D20958}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{10AFB19D-1AB8-45ED-B466-CE1989D20958}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -41,14 +37,18 @@ Global
 		{071FA3DA-B17F-4F4B-8A41-4C16E72BF191}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{071FA3DA-B17F-4F4B-8A41-4C16E72BF191}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{071FA3DA-B17F-4F4B-8A41-4C16E72BF191}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FF263EB-981F-42A7-A9FC-5473CA7A63FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FF263EB-981F-42A7-A9FC-5473CA7A63FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FF263EB-981F-42A7-A9FC-5473CA7A63FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FF263EB-981F-42A7-A9FC-5473CA7A63FC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{3833DCD1-0017-4117-991E-C7DCE141CC14} = {6FB396AD-C277-4CBE-ACCB-CF77BF87C7BD}
 		{10AFB19D-1AB8-45ED-B466-CE1989D20958} = {6FB396AD-C277-4CBE-ACCB-CF77BF87C7BD}
 		{2D66F1F1-2A80-4C05-B36F-063DAF76DC87} = {6FB396AD-C277-4CBE-ACCB-CF77BF87C7BD}
+		{1FF263EB-981F-42A7-A9FC-5473CA7A63FC} = {6FB396AD-C277-4CBE-ACCB-CF77BF87C7BD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {69E7FA3C-4169-4C76-B1EE-8C02EBFA1246}

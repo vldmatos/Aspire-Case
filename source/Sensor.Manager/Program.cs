@@ -9,21 +9,19 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        builder.AddServiceDefaults();
 
+        builder.AddServiceDefaults();
         builder.Services.AddAuthorization();
-        
+        builder.Services.AddSingleton(Mapping.Sensors);
+
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-
-        builder.Services.AddSingleton(Mapping.Sensors);
 
         var application = builder.Build();
 
         application.MapDefaultEndpoints();
-
         application.UseSwagger();
-        application.UseSwaggerUI();        
+        application.UseSwaggerUI();
         application.UseHttpsRedirection();
         application.UseAuthorization();
 

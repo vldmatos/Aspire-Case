@@ -5,6 +5,8 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = Host.CreateApplicationBuilder(args);
+
+        builder.Services.AddHttpClient();
         builder.AddServiceDefaults();
         builder.Services.AddHostedService<Worker>();
 
