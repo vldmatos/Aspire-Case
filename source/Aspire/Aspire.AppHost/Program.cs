@@ -7,7 +7,7 @@ var rabbitMQ = builder.AddRabbitMQ("rabbitMQ")
 
 builder.AddProject<Projects.Sensor_Manager>("sensor-manager");
 
-builder.AddProject<Projects.Data_Collector>("data-collector")
+builder.AddProject<Projects.Data_Collector>("data-collector")           
        .WithReference(rabbitMQ);
 
 builder.AddProject<Projects.Calibrator_Analyzer>("calibrator-analyzer")

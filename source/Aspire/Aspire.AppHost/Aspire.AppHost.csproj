@@ -10,14 +10,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.AppHost" Version="8.0.0" />
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="8.0.1" />
     <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="8.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Calibrator.Analyzer\Calibrator.Analyzer.csproj" />
     <ProjectReference Include="..\..\Data.Collector\Data.Collector.csproj" />
-    <ProjectReference Include="..\..\Library\Library.csproj" />
     <ProjectReference Include="..\..\Sensor.Manager\Sensor.Manager.csproj" />
   </ItemGroup>
 
