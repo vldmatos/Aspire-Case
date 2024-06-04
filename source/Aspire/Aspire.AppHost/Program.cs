@@ -17,5 +17,4 @@ builder.AddProject<Projects.Calibrator_Analyzer>("calibrator-analyzer")
        .WithReference(rabbitMQ);
 
 
-
 builder.Build().Run();

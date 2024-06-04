@@ -25,15 +25,14 @@ public class Worker(ILogger<Worker> logger, IHttpClientFactory httpClientFactory
             {
                 foreach (var sensor in _sensors)
                 {
-                    _logger.LogInformation("Sensor: {name}", sensor.Name);
                     response = await httpClient.GetAsync($"/SensorStatus/{sensor.Name}", stoppingToken);
-
                     if (response.IsSuccessStatusCode)
                     {
                         var status = await response.Content.ReadFromJsonAsync<Sensor>(stoppingToken);
 
                         if (status is not null)
-                            _logger.LogInformation("Sensor: {name} - Pressure: {pressure}", status.Name, status.Pressure);
+                            _logger.LogInformation("Sensor: {name} - Pressure: {pressure} - Min: {min} | Max: {max} - OK: {isCalibrate}", 
+                                                    status.Name, status.Pressure, status.Calibration.Min, status.Calibration.Max, status.IsCalibrate);
                     }
                 }
 
