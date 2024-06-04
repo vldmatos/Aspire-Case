@@ -16,11 +16,8 @@ public class Worker(ILogger<Worker> logger, IHttpClientFactory httpClientFactory
         httpClient.BaseAddress = new Uri("https://sensor-manager"); 
 
         var response = await httpClient.GetAsync("/MapSensors", stoppingToken);
-
         if (response.IsSuccessStatusCode)
             _sensors = await response.Content.ReadFromJsonAsync<List<Sensor>>(stoppingToken);
-        else
-            _logger.LogError("Error: {statusCode}", response.StatusCode);        
 
         if (_sensors is not null)
         {
@@ -37,12 +34,6 @@ public class Worker(ILogger<Worker> logger, IHttpClientFactory httpClientFactory
 
                         if (status is not null)
                             _logger.LogInformation("Sensor: {name} - Pressure: {pressure}", status.Name, status.Pressure);
-                        else
-                            _logger.LogError("Error: Not found sensor {status}", sensor.Name);
-                    }
-                    else
-                    {
-                        _logger.LogError("Error: {statusCode}", response.StatusCode);
                     }
                 }
 
