@@ -46,7 +46,7 @@ public class Worker(ILogger<Worker> logger, IHttpClientFactory httpClientFactory
                     }
                 }
 
-                await Task.Delay(5000, stoppingToken);
+                await Task.Delay(TimeSpan.FromSeconds(15), stoppingToken);
             }
         }
     }
