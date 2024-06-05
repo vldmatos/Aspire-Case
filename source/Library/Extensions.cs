@@ -9,7 +9,7 @@ using OpenTelemetry.Trace;
 
 namespace Microsoft.Extensions.Hosting;
 
-public static class TelemetryExtensions
+public static class Extensions
 {
     public static IHostApplicationBuilder AddServiceDefaults(this IHostApplicationBuilder builder)
     {
@@ -59,7 +59,8 @@ public static class TelemetryExtensions
 
         if (useOtlpExporter)
         {
-            builder.Services.AddOpenTelemetry().UseOtlpExporter();
+            builder.Services.AddOpenTelemetry()
+                            .UseOtlpExporter();
         }
 
         return builder;
@@ -80,7 +81,7 @@ public static class TelemetryExtensions
             webApplication.MapHealthChecks("/health");
             webApplication.MapHealthChecks("/alive", new HealthCheckOptions
             {
-                Predicate = r => r.Tags.Contains("live")
+                Predicate = helth => helth.Tags.Contains("live")
             });
         }
 

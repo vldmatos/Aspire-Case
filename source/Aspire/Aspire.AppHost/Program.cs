@@ -1,10 +1,7 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var rabbitMQ = builder.AddRabbitMQ("rabbitMQ")
-                      .WithEnvironment("RABBITMQ_DEFAULT_USER", "admin")
-                      .WithEnvironment("RABBITMQ_DEFAULT_PASS", "admin")
+var rabbitMQ = builder.AddRabbitMQ("messaging")                      
                       .WithManagementPlugin();
-
 
 var sensorManager = builder.AddProject<Projects.Sensor_Manager>("sensor-manager");
 
