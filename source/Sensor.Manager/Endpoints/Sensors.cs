@@ -12,16 +12,16 @@
             .WithTags("Sensors")
             .WithOpenApi();
 
-            endpoints.MapGet("/SensorStatus/{name}", (string name, HttpContext httpContext) =>
+            endpoints.MapGet("/Status/{name}", (string name, HttpContext httpContext) =>
             {
                 var sensors = httpContext.RequestServices.GetService<List<Library.Business.Sensor>>();
                 return sensors?.FirstOrDefault(item => string.Equals(item.Name, name, StringComparison.OrdinalIgnoreCase));
             })
-           .WithName("GetSensorStatus")
+           .WithName("Status")
            .WithTags("Sensors")
            .WithOpenApi();
 
-            endpoints.MapPost("/CalibrateSensor/{name}", (string name, HttpContext httpContext) =>
+            endpoints.MapPost("/Calibrate/{name}", (string name, HttpContext httpContext) =>
             {
                 var sensors = httpContext.RequestServices.GetService<List<Library.Business.Sensor>>();
                 var sensor = sensors?.FirstOrDefault(item => string.Equals(item.Name, name, StringComparison.OrdinalIgnoreCase));
@@ -30,11 +30,11 @@
 
                 return sensor;
             })
-            .WithName("CalibrateSensor")
+            .WithName("Calibrate")
             .WithTags("Sensors")
             .WithOpenApi();
 
-            endpoints.MapPost("/DescalibrateSensor/{name}", (string name, HttpContext httpContext) =>
+            endpoints.MapPost("/Descalibrate/{name}", (string name, HttpContext httpContext) =>
             {
                 var sensors = httpContext.RequestServices.GetService<List<Library.Business.Sensor>>();
                 var sensor = sensors?.FirstOrDefault(item => string.Equals(item.Name, name, StringComparison.OrdinalIgnoreCase));
@@ -47,7 +47,23 @@
 
                 return sensor;
             })
-            .WithName("DescalibrateSensor")
+            .WithName("Descalibrate")
+            .WithTags("Sensors")
+            .WithOpenApi();
+
+            endpoints.MapPost("/Maintenance/{name}", (string name, HttpContext httpContext) =>
+            {
+                var sensors = httpContext.RequestServices.GetService<List<Library.Business.Sensor>>();
+                var sensor = sensors?.FirstOrDefault(item => string.Equals(item.Name, name, StringComparison.OrdinalIgnoreCase));
+
+                if (sensor is null)
+                    return sensor;
+
+                sensor.Maintenance = true;
+
+                return sensor;
+            })
+            .WithName("Maintenance")
             .WithTags("Sensors")
             .WithOpenApi();
 

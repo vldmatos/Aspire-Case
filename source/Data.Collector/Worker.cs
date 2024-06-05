@@ -6,11 +6,15 @@ using System.Text.Json;
 
 namespace Data.Collector;
 
-public class Worker(ILogger<Worker> logger, IHttpClientFactory httpClientFactory, IConnection connection) : BackgroundService
+public class Worker(ILogger<Worker> logger, 
+                    IHttpClientFactory httpClientFactory, 
+                    IConnection connection) : BackgroundService
 {
     private readonly ILogger<Worker> _logger = logger;
     private readonly IHttpClientFactory _clientFactory = httpClientFactory;
     private readonly IConnection _connection = connection;
+
+    private const string _queueName = "sensors";
    
     private List<Sensor>? _sensors;
 
@@ -20,7 +24,7 @@ public class Worker(ILogger<Worker> logger, IHttpClientFactory httpClientFactory
         httpClient.BaseAddress = new Uri("https://sensor-manager");
 
         IModel channel = _connection.CreateModel();
-        channel.QueueDeclareNoWait("sensors", true, false, false, null);
+        channel.QueueDeclareNoWait(_queueName, true, false, false, null);
         var properties = channel.CreateBasicProperties();
         properties.Persistent = true;
 
@@ -32,21 +36,35 @@ public class Worker(ILogger<Worker> logger, IHttpClientFactory httpClientFactory
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                foreach (var sensor in _sensors)
+                var sensorsNotMaintenance = _sensors.Where(x => !x.Maintenance)
+                                                    .ToList();
+
+                foreach (var sensor in sensorsNotMaintenance)
                 {
-                    response = await httpClient.GetAsync($"/SensorStatus/{sensor.Name}", stoppingToken);
+                    response = await httpClient.GetAsync($"/Status/{sensor.Name}", stoppingToken);
                     if (response.IsSuccessStatusCode)
                     {
                         var status = await response.Content.ReadFromJsonAsync<Sensor>(stoppingToken);
-
                         if (status is not null)
-                            _logger.LogInformation("Sensor: {name} - Pressure: {pressure} - Min: {min} | Max: {max} - OK: {isCalibrate}", 
-                                                    status.Name, status.Pressure, status.Calibration.Min, status.Calibration.Max, status.IsCalibrate);
+                        {
+                            if (status.IsCalibrate)
+                            {
+                                _logger.LogInformation("OK: {isCalibrate} - Sensor: {name} - Pressure: {pressure} - Min: {min} | Max: {max}",
+                                                     status.IsCalibrate, status.Name, status.Pressure, status.Calibration.Min, status.Calibration.Max);
+                            }
+                            else
+                            {
+                                _logger.LogWarning("Warning: Calibration Sensor: {name} - Pressure: {pressure} - Min: {min} | Max: {max}",
+                                                    status.Name, status.Pressure, status.Calibration.Min, status.Calibration.Max);
 
-                        channel.BasicPublish(exchange: string.Empty, 
-                                             routingKey: "sensors", 
-                                             basicProperties: properties, 
-                                             body: Encoding.UTF8.GetBytes(JsonSerializer.Serialize(sensor)));
+                                channel.BasicPublish(exchange: string.Empty,
+                                                     routingKey: _queueName,
+                                                     basicProperties: properties,
+                                                     body: Encoding.UTF8.GetBytes(JsonSerializer.Serialize(status)));
+
+                                await httpClient.PostAsync($"/Maintenance/{status.Name}", null, stoppingToken);
+                            }
+                        }
                     }
                 }
 
