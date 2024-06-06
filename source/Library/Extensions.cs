@@ -44,7 +44,8 @@ public static class Extensions
                         })
                         .WithTracing(tracing =>
                         {
-                            tracing.AddAspNetCoreInstrumentation()            
+                            tracing.AddAspNetCoreInstrumentation()
+                                   .AddEntityFrameworkCoreInstrumentation()
                                    .AddHttpClientInstrumentation();
                         });
 
