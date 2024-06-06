@@ -1,4 +1,4 @@
-﻿using Library.Business;
+﻿using Library;
 using System.Text;
 using System.Text.Json;
 
@@ -8,9 +8,17 @@ namespace Sensors
     {
         public static IEndpointRouteBuilder MapEndpoint(this IEndpointRouteBuilder endpoints)
         {
-            endpoints.MapPost("/calibrate/{name}", (string name, HttpContext httpContext) =>
+            endpoints.MapGet("/sensors", (HttpContext httpContext, DataContext dataContext) =>
             {
-                var sensors = httpContext.RequestServices.GetService<List<Sensor>>();
+                return dataContext.Sensors.ToList();
+            })
+            .WithName("Sensors")
+            .WithTags("Sensors")
+            .WithOpenApi();
+
+            endpoints.MapPost("/calibrate/{name}", (string name, HttpContext httpContext, DataContext dataContext) =>
+            {
+                var sensors = dataContext.Sensors.ToList();
                 var sensor = sensors?.FirstOrDefault(item => string.Equals(item.Name, name, StringComparison.OrdinalIgnoreCase));
 
                 if (sensor is null)
@@ -19,18 +27,19 @@ namespace Sensors
                 sensor.Maintenance = true;
                 sensor.Calibrate();
 
+                dataContext.SaveChanges();
+
                 return sensor;
             })
             .WithName("Calibrate")
             .WithTags("Sensors")
             .WithOpenApi();
 
-            endpoints.MapPost("/send-signal/{count}", (int count, HttpContext httpContext, IHttpClientFactory httpClientFactory) => 
+            endpoints.MapPost("/send-signal/{count}", (int count, HttpContext httpContext, IHttpClientFactory httpClientFactory, DataContext dataContext) => 
            {
-               var sensors = httpContext.RequestServices.GetService<List<Sensor>>();
+               var sensors = dataContext.Sensors.ToList();
                if (sensors is null)
                     return;
-
 
                var client = httpClientFactory.CreateClient();
                client.BaseAddress = new Uri("https://manager");
@@ -49,6 +58,24 @@ namespace Sensors
            .WithName("Send-Signal")
            .WithTags("Sensors")
            .WithOpenApi();
+
+            endpoints.MapPost("/decalibrate/{name}", (string name, HttpContext httpContext, DataContext dataContext) =>
+            {
+                var sensors = dataContext.Sensors.ToList();
+                var sensor = sensors?.FirstOrDefault(item => string.Equals(item.Name, name, StringComparison.OrdinalIgnoreCase));
+
+                if (sensor is null)
+                    return sensor;
+
+                sensor.Pressure = sensor.Min - 1;
+
+                dataContext.SaveChanges();
+
+                return sensor;
+            })
+            .WithName("Decalibrate ")
+            .WithTags("Sensors")
+            .WithOpenApi();
 
             return endpoints;
         }

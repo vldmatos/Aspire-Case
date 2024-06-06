@@ -1,4 +1,4 @@
-using Library.Business;
+using Library;
 
 namespace Manager;
 
@@ -9,15 +9,17 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.AddServiceDefaults();
+        builder.AddNpgsqlDbContext<DataContext>("sensorsDatabase");
         builder.AddRabbitMQClient("messaging");
 
         builder.Services.AddAuthorization();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-        builder.Services.AddSingleton(Context.Sensors);
+        builder.Services.AddHttpClient();
 
         var application = builder.Build();
 
+        application.CreateDbIfNotExists();
         application.MapDefaultEndpoints();
         application.UseSwagger();
         application.UseSwaggerUI();

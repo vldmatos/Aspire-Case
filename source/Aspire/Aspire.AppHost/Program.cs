@@ -1,11 +1,17 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
+var manager = builder.AddProject<Projects.Manager>("manager");
+
+var databases = builder.AddPostgres("databases")                       
+                       .WithPgAdmin();
+
+var sensorsDatabase = databases.AddDatabase("sensorsDatabase");
+
 var messaging = builder.AddRabbitMQ("messaging")                      
                        .WithManagementPlugin();
 
-var manager = builder.AddProject<Projects.Manager>("manager");
-
 var sensors = builder.AddProject<Projects.Sensors>("sensors")
+                     .WithReference(sensorsDatabase)
                      .WithReference(manager);
 
 builder.AddProject<Projects.Analyzer>("analyzer")
@@ -13,7 +19,8 @@ builder.AddProject<Projects.Analyzer>("analyzer")
        .WithReference(messaging);
 
 manager.WithReference(messaging)
-       .WithReference(sensors);
+       .WithReference(sensors)
+       .WithReference(sensorsDatabase);
 
 
 builder.Build().Run();

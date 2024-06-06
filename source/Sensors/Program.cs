@@ -1,4 +1,4 @@
-using Library.Business;
+using Library;
 
 namespace Sensors;
 
@@ -7,10 +7,10 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
+        
         builder.AddServiceDefaults();
-
-        builder.Services.AddSingleton(Context.Sensors);
+        builder.AddNpgsqlDbContext<DataContext>("sensorsDatabase");
+        
         builder.Services.AddHttpClient();
         builder.Services.AddAuthorization();        
         builder.Services.AddEndpointsApiExplorer();
@@ -18,6 +18,7 @@ public class Program
 
         var application = builder.Build();
 
+        application.CreateDbIfNotExists();        
         application.MapDefaultEndpoints();
 
         application.UseSwagger();

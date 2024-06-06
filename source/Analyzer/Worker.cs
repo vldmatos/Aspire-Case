@@ -1,6 +1,8 @@
+using Library.Business;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
+using System.Text.Json;
 
 namespace Analyzer;
 
@@ -16,31 +18,50 @@ public class Worker(ILogger<Worker> logger,
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var httpClient = _clientFactory.CreateClient();
-        httpClient.BaseAddress = new Uri("https://sensor-manager");
+        var message = await ReceiveidMessage();
+        if (message == string.Empty)
+            return;
+    }
 
+    private Sensor? Analize(string message)
+    {
+        var sensor = JsonSerializer.Deserialize<Sensor>(message);
+        if (sensor is null)
+            return sensor;
+
+        if (!sensor.IsCalibrate)
+        {
+            var httpClient = _clientFactory.CreateClient();
+            httpClient.BaseAddress = new Uri("https://manager");
+            httpClient.PostAsync($"/maintenance/{sensor.Name}", null);
+
+            _logger.LogWarning("Send to Maintenance to manager:{sensor}", message);
+        }
+
+        return sensor;
+    }
+
+    private Task<string> ReceiveidMessage()
+    {
         IModel channel = _connection.CreateModel();
         channel.QueueDeclareNoWait(_queueName, true, false, false, null);
-        string sensor = string.Empty;
+        string message = string.Empty;
 
-        channel.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false);
         var eventingConsumer = new EventingBasicConsumer(channel);
+        channel.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false);
+        channel.BasicConsume(queue: _queueName, autoAck: false, consumer: eventingConsumer);
 
         eventingConsumer.Received += (model, content) =>
         {
             channel.BasicAck(deliveryTag: content.DeliveryTag, multiple: false);
 
-            sensor = Encoding.UTF8.GetString(content.Body.ToArray());
+            message = Encoding.UTF8.GetString(content.Body.ToArray());
 
-            _logger.LogInformation("Message:{sensor}", sensor);
+            _logger.LogInformation("Received:{sensor}", message);
+
+            var sensor = Analize(message);
         };
-
-        channel.BasicConsume(queue: _queueName, autoAck: false, consumer: eventingConsumer);
-
-        while (!stoppingToken.IsCancellationRequested)
-        {
-            await Task.Delay(TimeSpan.FromSeconds(15), stoppingToken);
-            sensor = string.Empty;
-        }
+       
+        return Task.FromResult(message);
     }
 }
