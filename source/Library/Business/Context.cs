@@ -1,23 +1,24 @@
-﻿
-namespace Library.Business
+﻿namespace Library.Business
 {
-    public class Mapping
+    public class Context
     {
+        private const int total = 10;
+
         private static List<Sensor>? _sensors;
-        public static List<Sensor> Sensors 
-        { 
-            get 
-            { 
-                _sensors ??= MapAllSensors();
+        public static List<Sensor> Sensors
+        {
+            get
+            {
+                _sensors ??= GenerateSensors();
 
                 return _sensors;
-            } 
+            }
         }
-        private static List<Sensor> MapAllSensors()
+        private static List<Sensor> GenerateSensors()
         {
-            List<Sensor> initialize = [];
+            var initialize = new List<Sensor>(total);
 
-            for (var i = 0; i < 10; i++)
+            for (var i = 0; i < total; i++)
             {
                 string name = Guid.NewGuid().ToString().ToUpper()[..6];
                 int max = Random.Shared.Next(60, 80);

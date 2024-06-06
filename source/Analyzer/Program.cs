@@ -1,4 +1,4 @@
-namespace Data.Collector;
+namespace Analyzer;
 
 public class Program
 {

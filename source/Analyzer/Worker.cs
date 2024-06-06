@@ -2,7 +2,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 
-namespace Calibrator.Analyzer;
+namespace Analyzer;
 
 public class Worker(ILogger<Worker> logger,
                     IHttpClientFactory httpClientFactory,
@@ -12,7 +12,7 @@ public class Worker(ILogger<Worker> logger,
     private readonly IHttpClientFactory _clientFactory = httpClientFactory;
     private readonly IConnection _connection = connection;
 
-    private const string _queueName = "sensors";
+    private const string _queueName = "signals";
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {

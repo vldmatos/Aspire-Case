@@ -1,8 +1,6 @@
-
 using Library.Business;
-using Sensor.Manager.Endpoints;
 
-namespace Sensor.Manager;
+namespace Manager;
 
 public class Program
 {
@@ -11,11 +9,12 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.AddServiceDefaults();
-        builder.Services.AddAuthorization();
-        builder.Services.AddSingleton(Mapping.Sensors);
+        builder.AddRabbitMQClient("messaging");
 
+        builder.Services.AddAuthorization();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+        builder.Services.AddSingleton(Context.Sensors);
 
         var application = builder.Build();
 
@@ -25,7 +24,7 @@ public class Program
         application.UseHttpsRedirection();
         application.UseAuthorization();
 
-        application.MapSensors();
+        application.MapEndpoint();
 
         application.Run();
     }

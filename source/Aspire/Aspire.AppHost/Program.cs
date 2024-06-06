@@ -1,17 +1,19 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var rabbitMQ = builder.AddRabbitMQ("messaging")                      
-                      .WithManagementPlugin();
+var messaging = builder.AddRabbitMQ("messaging")                      
+                       .WithManagementPlugin();
 
-var sensorManager = builder.AddProject<Projects.Sensor_Manager>("sensor-manager");
+var manager = builder.AddProject<Projects.Manager>("manager");
 
-builder.AddProject<Projects.Data_Collector>("data-collector")
-       .WithReference(sensorManager)
-       .WithReference(rabbitMQ);
+var sensors = builder.AddProject<Projects.Sensors>("sensors")
+                     .WithReference(manager);
 
-builder.AddProject<Projects.Calibrator_Analyzer>("calibrator-analyzer")
-       .WithReference(sensorManager)
-       .WithReference(rabbitMQ);
+builder.AddProject<Projects.Analyzer>("analyzer")
+       .WithReference(manager)
+       .WithReference(messaging);
+
+manager.WithReference(messaging)
+       .WithReference(sensors);
 
 
 builder.Build().Run();
