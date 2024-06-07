@@ -26,9 +26,11 @@ Criar metricas para os sensores.
 ## Arquitetura
 
 - .Net API gerenciamento dos sensores
-- .Net Serviço com jobs coletores de dados
-- .Net Serviço com jobs analizadores e calibradores
+- .Net API simulador de sensores
+- .Net Serviço analizador
 - .Net Aspire Open Telemetry
-- Broker de mensagens rabbitMQ
+- Broker de mensagens Mass Transit com RabbitMQ
+- Banco de dados Postgres com EFCore
+- Docker Desktop para containers
 
 ![Arquitetura](images/architecture.png)
