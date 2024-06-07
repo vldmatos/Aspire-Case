@@ -31,7 +31,7 @@ namespace Library
 
     public static class DbInitializer
     {
-        private const int total = 1;
+        private const int total = 5;
         public static void Initialize(DataContext context)
         {
             if (context.Sensors.Any())

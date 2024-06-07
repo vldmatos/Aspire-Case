@@ -22,8 +22,8 @@ namespace Analyzer
         {
             if (!sensor.IsCalibrate)
             {
-                var meter = meterFactory.Create("Analyzer");
-                var instrument = meter.CreateCounter<int>("Uncalibrated-Sensor");
+                var meter = meterFactory.Create("Uncalibrated-Sensor");
+                var instrument = meter.CreateCounter<int>(sensor.Name);
                 instrument.Add(1);
 
                 var httpClient = httpClientFactory.CreateClient();

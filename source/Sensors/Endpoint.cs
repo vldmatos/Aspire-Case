@@ -37,8 +37,8 @@ namespace Sensors
 
                 dataContext.SaveChanges();
 
-                var meter = meterFactory.Create("Sensor");
-                var instrument = meter.CreateCounter<int>("Sensor-Calibrate");
+                var meter = meterFactory.Create("Sensor-Calibrate");
+                var instrument = meter.CreateCounter<int>(sensor.Name);
                 instrument.Add(1);
 
                 return sensor;
@@ -69,8 +69,8 @@ namespace Sensors
                         var content = new StringContent(JsonSerializer.Serialize(sensor), Encoding.UTF8, "application/json");
                         client.PostAsync("/signal", content);
 
-                        var meter = meterFactory.Create("Sensor");
-                        var instrument = meter.CreateCounter<int>("Send-Signal");
+                        var meter = meterFactory.Create("Send-Signal");
+                        var instrument = meter.CreateCounter<int>(sensor.Name);
                         instrument.Add(1);
                     }); 
                }

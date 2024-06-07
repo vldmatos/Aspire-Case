@@ -1,4 +1,5 @@
-﻿using Library.Business;
+﻿using Library;
+using Library.Business;
 using MassTransit;
 using System.Diagnostics.Metrics;
 
@@ -33,13 +34,21 @@ namespace Manager
                                 (string name, 
                                 HttpContext httpContext, 
                                 IHttpClientFactory httpClientFactory, 
+                                DataContext dataContext,
                                 IMeterFactory meterFactory) =>
             {
                 if (string.IsNullOrEmpty(name))
                     return;
 
-                var meter = meterFactory.Create("Manager");
-                var instrument = meter.CreateCounter<int>("Sensor-Maintenance");
+                var sensor = dataContext.Sensors.FirstOrDefault(x => x.Name == name);
+                if (sensor is null)
+                    return;
+
+                sensor.Maintenance = true;
+                dataContext.SaveChanges();
+
+                var meter = meterFactory.Create("Sensor-Maintenance");
+                var instrument = meter.CreateCounter<int>(sensor.Name);
                 instrument.Add(1);
 
                 var httpClient = httpClientFactory.CreateClient(); 

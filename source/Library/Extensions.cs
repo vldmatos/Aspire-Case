@@ -41,7 +41,7 @@ public static class Extensions
                             metrics.AddAspNetCoreInstrumentation()
                                    .AddHttpClientInstrumentation()
                                    .AddRuntimeInstrumentation()
-                                   .AddMeter("Sensor", "Manager", "Analyzer");
+                                   .AddMeter("Send-Signal", "Uncalibrated-Sensor", "Sensor-Maintenance", "Sensor-Calibrate");
                         })
                         .WithTracing(tracing =>
                         {
