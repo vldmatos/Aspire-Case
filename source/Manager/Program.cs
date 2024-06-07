@@ -26,6 +26,7 @@ public class Program
             });
         }
 
+        builder.Services.AddMetrics();
         builder.Services.AddAuthorization();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();

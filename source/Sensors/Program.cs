@@ -10,7 +10,8 @@ public class Program
         
         builder.AddServiceDefaults();
         builder.AddNpgsqlDbContext<DataContext>("sensorsDatabase");
-        
+
+        builder.Services.AddMetrics();
         builder.Services.AddHttpClient();
         builder.Services.AddAuthorization();        
         builder.Services.AddEndpointsApiExplorer();

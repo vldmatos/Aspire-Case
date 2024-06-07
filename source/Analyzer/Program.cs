@@ -27,7 +27,8 @@ public class Program
                 });
             });
         }
-
+        
+        builder.Services.AddMetrics();
         builder.Services.AddHttpClient();
         builder.Services.AddHostedService<Worker>();
 

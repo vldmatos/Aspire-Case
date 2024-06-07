@@ -1,5 +1,6 @@
 ﻿using Library;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.Metrics;
 using System.Text;
 using System.Text.Json;
 
@@ -9,7 +10,9 @@ namespace Sensors
     {
         public static IEndpointRouteBuilder MapEndpoint(this IEndpointRouteBuilder endpoints)
         {
-            endpoints.MapGet("/sensors", (HttpContext httpContext, DataContext dataContext) =>
+            endpoints.MapGet("/sensors", 
+                                (HttpContext httpContext, 
+                                DataContext dataContext) =>
             {
                 return dataContext.Sensors.ToList();
             })
@@ -17,7 +20,11 @@ namespace Sensors
             .WithTags("Sensors")
             .WithOpenApi();
 
-            endpoints.MapPost("/calibrate/{name}", (string name, HttpContext httpContext, DataContext dataContext) =>
+            endpoints.MapPost("/calibrate/{name}", 
+                                (string name, 
+                                HttpContext httpContext, 
+                                DataContext dataContext, 
+                                IMeterFactory meterFactory) =>
             {
                 var sensors = dataContext.Sensors.ToList();
                 var sensor = sensors?.FirstOrDefault(item => string.Equals(item.Name, name, StringComparison.OrdinalIgnoreCase));
@@ -30,13 +37,22 @@ namespace Sensors
 
                 dataContext.SaveChanges();
 
+                var meter = meterFactory.Create("Sensor");
+                var instrument = meter.CreateCounter<int>("Sensor-Calibrate");
+                instrument.Add(1);
+
                 return sensor;
             })
             .WithName("Calibrate")
             .WithTags("Sensors")
             .WithOpenApi();
 
-            endpoints.MapPost("/send-signal/{count}", (int count, HttpContext httpContext, IHttpClientFactory httpClientFactory, DataContext dataContext) => 
+            endpoints.MapPost("/send-signal/{count}", 
+                                (int count, 
+                                HttpContext httpContext, 
+                                IHttpClientFactory httpClientFactory, 
+                                DataContext dataContext, 
+                                IMeterFactory meterFactory) => 
            {
                var sensors = dataContext.Sensors.AsNoTracking()
                                                 .ToList();
@@ -52,6 +68,10 @@ namespace Sensors
                     {
                         var content = new StringContent(JsonSerializer.Serialize(sensor), Encoding.UTF8, "application/json");
                         client.PostAsync("/signal", content);
+
+                        var meter = meterFactory.Create("Sensor");
+                        var instrument = meter.CreateCounter<int>("Send-Signal");
+                        instrument.Add(1);
                     }); 
                }
 
@@ -61,7 +81,11 @@ namespace Sensors
            .WithTags("Sensors")
            .WithOpenApi();
 
-            endpoints.MapPost("/decalibrate/{name}", (string name, HttpContext httpContext, DataContext dataContext) =>
+            endpoints.MapPost("/decalibrate/{name}", 
+                                (string name, 
+                                HttpContext httpContext, 
+                                DataContext dataContext,
+                                IMeterFactory meterFactory) =>
             {
                 var sensors = dataContext.Sensors.ToList();
                 var sensor = sensors?.FirstOrDefault(item => string.Equals(item.Name, name, StringComparison.OrdinalIgnoreCase));
