@@ -1,8 +1,5 @@
-﻿using Library;
-using Library.Business;
-using RabbitMQ.Client;
-using System.Text;
-using System.Text.Json;
+﻿using Library.Business;
+using MassTransit;
 
 namespace Manager
 {
@@ -12,32 +9,12 @@ namespace Manager
 
         public static IEndpointRouteBuilder MapEndpoint(this IEndpointRouteBuilder endpoints)
         {
-            endpoints.MapPost("/signal", (Sensor sensor, HttpContext httpContext, IConnection connection, DataContext dataContext) =>
+            endpoints.MapPost("/signal", async (Sensor sensor, HttpContext httpContext, IBus bus) =>
             {
                 if (sensor is null)
                     return sensor;
 
-                var sensors = dataContext.Sensors.ToList();
-                var received = sensors?.FirstOrDefault(item => string.Equals(item.Name, sensor.Name, StringComparison.OrdinalIgnoreCase));
-
-                if (received is not null)
-                    sensors?.Add(received);
-
-                using (var channel = connection.CreateModel())
-                {
-                    channel.QueueDeclare(queue: queue, 
-                                         durable: true, 
-                                         exclusive: false, 
-                                         autoDelete: false, 
-                                         arguments: null);
-
-                    var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(sensor));
-
-                    channel.BasicPublish(exchange: string.Empty, 
-                                         routingKey: queue, 
-                                         basicProperties: null, 
-                                         body: body);
-                }
+                await bus.Publish(sensor);
 
                 return sensor;
             })
@@ -45,19 +22,16 @@ namespace Manager
             .WithTags("Manager")
             .WithOpenApi();
 
-            endpoints.MapPost("/maintenance/{name}", (string name, HttpContext httpContext, IHttpClientFactory httpClientFactory, DataContext dataContext) =>
+            endpoints.MapPost("/maintenance/{name}", (string name, HttpContext httpContext, IHttpClientFactory httpClientFactory) =>
             {
-                var sensors = dataContext.Sensors.ToList();
-                var sensor = sensors?.FirstOrDefault(item => string.Equals(item.Name, name, StringComparison.OrdinalIgnoreCase));
-
-                if (sensor is null)
-                    return sensor;
+                if (string.IsNullOrEmpty(name))
+                    return;
 
                 var httpClient = httpClientFactory.CreateClient(); 
                 httpClient.BaseAddress = new Uri("https://sensors");
-                httpClient.PostAsync($"/calibrate/{sensor.Name}", null);
+                httpClient.PostAsync($"/calibrate/{name}", null);
 
-                return sensor;
+                return;
             })
             .WithName("Maintenance")
             .WithTags("Sensors")

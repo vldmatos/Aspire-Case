@@ -1,4 +1,5 @@
 ﻿using Library;
+using Microsoft.EntityFrameworkCore;
 using System.Text;
 using System.Text.Json;
 
@@ -37,7 +38,8 @@ namespace Sensors
 
             endpoints.MapPost("/send-signal/{count}", (int count, HttpContext httpContext, IHttpClientFactory httpClientFactory, DataContext dataContext) => 
            {
-               var sensors = dataContext.Sensors.ToList();
+               var sensors = dataContext.Sensors.AsNoTracking()
+                                                .ToList();
                if (sensors is null)
                     return;
 

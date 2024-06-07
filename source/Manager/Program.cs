@@ -1,4 +1,5 @@
 using Library;
+using MassTransit;
 
 namespace Manager;
 
@@ -10,7 +11,20 @@ public class Program
 
         builder.AddServiceDefaults();
         builder.AddNpgsqlDbContext<DataContext>("sensorsDatabase");
-        builder.AddRabbitMQClient("messaging");
+        
+        var messaging = builder.Configuration.GetConnectionString("messaging");
+        if (!string.IsNullOrWhiteSpace(messaging))
+        {
+            builder.Services.AddMassTransit(x =>
+            {
+                x.SetKebabCaseEndpointNameFormatter();
+                x.UsingRabbitMq((context, configuration) =>
+                {
+                    configuration.Host(new Uri(messaging), c => { });
+                    configuration.ConfigureEndpoints(context);
+                });
+            });
+        }
 
         builder.Services.AddAuthorization();
         builder.Services.AddEndpointsApiExplorer();
@@ -18,8 +32,7 @@ public class Program
         builder.Services.AddHttpClient();
 
         var application = builder.Build();
-
-        application.CreateDbIfNotExists();
+        
         application.MapDefaultEndpoints();
         application.UseSwagger();
         application.UseSwaggerUI();

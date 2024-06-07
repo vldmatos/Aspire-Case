@@ -46,7 +46,9 @@ public static class Extensions
                         {
                             tracing.AddAspNetCoreInstrumentation()
                                    .AddEntityFrameworkCoreInstrumentation()
-                                   .AddHttpClientInstrumentation();
+                                   .AddMassTransitInstrumentation()
+                                   .AddHttpClientInstrumentation()
+                                   .AddSource("MassTransit");
                         });
 
         builder.AddOpenTelemetryExporters();
