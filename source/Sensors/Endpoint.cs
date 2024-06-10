@@ -14,7 +14,8 @@ namespace Sensors
                                 (HttpContext httpContext, 
                                 DataContext dataContext) =>
             {
-                return dataContext.Sensors.ToList();
+                return dataContext.Sensors.AsNoTracking()
+                                          .ToList();
             })
             .WithName("Sensors")
             .WithTags("Sensors")
@@ -32,7 +33,7 @@ namespace Sensors
                 if (sensor is null)
                     return sensor;
 
-                sensor.Maintenance = true;
+                sensor.Maintenance = false;
                 sensor.Calibrate();
 
                 dataContext.SaveChanges();

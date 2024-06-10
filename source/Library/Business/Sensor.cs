@@ -27,7 +27,7 @@
         {
             if (Pressure < Min)
             {
-                return (Min - Pressure) + (Max - Min) + 1;
+                return ((Min - Pressure) + (Max - Min)) + 1;
             }
 
             if (Pressure > Max)
