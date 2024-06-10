@@ -34,3 +34,28 @@ Criar metricas para os sensores.
 - Docker Desktop para containers
 
 ![Arquitetura](images/architecture.png)
+
+## Observabilidade
+
+Inicializando o aspire app host é possível realizar os testes de ponta a ponta simulando a aplicação
+
+- Pode ser utilizada a api para simular os processos dos sensores  
+  - Obter os sensores  
+  - Envio dos sinais  
+  - Descalibrar e Calibrar um sensor.  
+![Arquitetura](images/api.png)
+
+- Database gerado com docker e apire
+![Arquitetura](images/database.png)
+
+- Logs estruturados após as requisições e comunicação dos serviços
+![Arquitetura](images/aspire-logs.png)
+
+- Traces mostra a comunicação entre todos os serviços definidos na arquitetura
+![Arquitetura](images/aspire-trace.png)  
+![Arquitetura](images/aspire-trace-details.png)
+
+- Metricas configuradas manualmente para identificar os pontos de interesse na execução
+dos processos
+![Arquitetura](images/aspire-metrics-01.png)  
+![Arquitetura](images/aspire-metrics-02.png)  
